@@ -59,32 +59,39 @@ public class UserServiceImpl implements UserService
     @Override
     public void delete(long id)
     {
-        userrepos.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not found!"));
-        userrepos.deleteById(id);
+        if (userrepos.findById(id).isPresent())
+        {
+            userrepos.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("User " + id + " not found!");
+        }
+//        userrepos.findById(id)
+//            .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not found!"));
+//        userrepos.deleteById(id);
     }
 
-//    newTodo.setUser(userRepository.findById(todo.getUser().getUserid())
 
     @Transactional
     @Override
     public User save(User user)
     {
+        // We ar re-writing this user object*
         User newUser = new User();
+        // Checking to see if userid is null, if its 0 its a post request
+        if (user.getUserid() != 0)
+        {
+            userrepos.findById(user.getUserid())
+                    .orElseThrow(() -> new EntityNotFoundException("User " + user.getUserid() + " not found! "));
+            newUser.setUserid(user.getUserid());
+        }
 
         newUser.setUsername(user.getUsername()
             .toLowerCase());
         newUser.setPassword(user.getPassword());
         newUser.setPrimaryemail(user.getPrimaryemail()
             .toLowerCase());
-//        for (Todos t: user.getTodos())
-//        {
-//            Todos todo = todorepos.findById(t.getTodoid())
-//                    .orElseThrow(() -> new EntityNotFoundException("Todos " + t.getTodoid() + " not found!"));
-//
-//            newUser.getTodos().add(todo)
-//        }
 
+        // Connecting new todos to our user
         for (Todos t: user.getTodos())
         {
             Todos newTodo = new Todos();
@@ -92,8 +99,6 @@ public class UserServiceImpl implements UserService
             newTodo.setUser(newUser);
             newUser.getTodos().add(newTodo);
         }
-
-
 
         return userrepos.save(newUser);
     }
