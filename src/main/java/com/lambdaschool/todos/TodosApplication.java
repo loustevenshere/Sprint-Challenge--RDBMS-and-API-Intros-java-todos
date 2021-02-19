@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class TodosApplication
 {
 
+    // Entry Point
     /**
      * Main method to start the application.
      *
