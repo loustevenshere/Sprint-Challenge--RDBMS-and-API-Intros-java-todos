@@ -78,6 +78,8 @@ public class User extends Auditable
         this.primaryemail = primaryemail;
     }
 
+
+
     /**
      * Getter for userid
      *

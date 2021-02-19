@@ -1,6 +1,8 @@
 package com.lambdaschool.todos.services;
 
+import com.lambdaschool.todos.models.Todos;
 import com.lambdaschool.todos.models.User;
+import com.lambdaschool.todos.repository.TodoRepository;
 import com.lambdaschool.todos.repository.UserRepository;
 import com.lambdaschool.todos.views.UserNameCountTodos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService
      */
     @Autowired
     private UserRepository userrepos;
+
+    @Autowired
+    private TodoRepository todorepos;
 
     /**
      * Connects this service to the auditing service in order to get current user name
@@ -59,6 +64,8 @@ public class UserServiceImpl implements UserService
         userrepos.deleteById(id);
     }
 
+//    newTodo.setUser(userRepository.findById(todo.getUser().getUserid())
+
     @Transactional
     @Override
     public User save(User user)
@@ -70,6 +77,23 @@ public class UserServiceImpl implements UserService
         newUser.setPassword(user.getPassword());
         newUser.setPrimaryemail(user.getPrimaryemail()
             .toLowerCase());
+//        for (Todos t: user.getTodos())
+//        {
+//            Todos todo = todorepos.findById(t.getTodoid())
+//                    .orElseThrow(() -> new EntityNotFoundException("Todos " + t.getTodoid() + " not found!"));
+//
+//            newUser.getTodos().add(todo)
+//        }
+
+        for (Todos t: user.getTodos())
+        {
+            Todos newTodo = new Todos();
+            newTodo.setDescription(t.getDescription());
+            newTodo.setUser(newUser);
+            newUser.getTodos().add(newTodo);
+        }
+
+
 
         return userrepos.save(newUser);
     }

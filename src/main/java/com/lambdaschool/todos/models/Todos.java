@@ -30,7 +30,6 @@ public class Todos extends Auditable {
     public Todos(User user, String description) {
         this.user = user;
         this.description = description;
-
     }
 
 
